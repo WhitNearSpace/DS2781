@@ -61,6 +61,40 @@ class DS2781{
          * **/
         void setData(char data, char reg);
 
+        //////////
+        // Debug functions 
+        // Read data from the DS2781 and return both the read data
+        // and a boolean indicating success/failure of communication
+        //////////
+
+        /***
+         *  The structure to be returned from debug functions 
+         * **/
+        struct debug_return{
+            float data;
+            bool success;
+        };
+
+        /***
+         *  Read voltage from DS2781 
+         * @return debug_return structure, containing the voltage
+         * data and a debug boolean 
+         * **/
+        debug_return readVoltage_debugger();
+
+        /***
+         *  Read temperature from DS2781 
+         * @return debug_return structure, containing the temperature
+         * data and a debug boolean 
+         * **/
+        debug_return readTemp_debugger();
+
+        /***
+         *  Read current from DS2781 
+         * @return debug_return structure, containing the current
+         * data and a debug boolean 
+         * **/
+        debug_return readCurrent_debugger();
 
     private:
         char _ROM[8];

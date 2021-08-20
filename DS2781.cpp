@@ -69,11 +69,7 @@ float DS2781::readVoltage(){
     int16_t result = 0;
     if(_onewire->reset()) // Issue reset command 
     {       
-        if(_ROM[0] != 0){ // If this device has a ROM ID, use the ID to directly contact the device 
-            matchROM();
-        }else{ // If the device does not have a ROM ID, just adress all of the devices with a skip command 
-            _onewire->writeByte(SKIP_ROM); 
-        }
+        matchROM();
         _onewire->writeByte(READ_DATA); // Put in read mode 
         _onewire->writeByte(VOLT_MSB);  // Voltage register MSB 
         result  = _onewire->readByte()  << 8;     // Read MSB
@@ -103,11 +99,11 @@ float DS2781::readCurrent(){
         _onewire->writeByte(CURRENT_MSB); // Current register MSB
         result  = (uint16_t)_onewire->readByte()  << 8;     // Read MSB   
         result = result | (uint16_t)_onewire->readByte() ;  // Read LSB
+        if (result & 0x8000) { // Since the reading is in 2's compliment form, if the first bit is 1, the number is negative 
+                    result = 0-((result ^ 0xffff) + 1); // Convert from 2's compliment to signed integer
+        }
+        result = result + 0.0; // Convert to floating point and assign to the return variable
     }
-    if (result & 0x8000) { // Since the reading is in 2's compliment form, if the first bit is 1, the number is negative 
-                result = 0-((result ^ 0xffff) + 1); // Convert from 2's compliment to signed integer
-    }
-    result = result + 0.0; // Convert to floating point and assign to the return variable
     return result*0.00000332446809; // Return result and account for the resolution (1.5625 uV)/(sense resistance)
 }
 
@@ -127,4 +123,67 @@ void DS2781::setData(char data, char reg){
         _onewire->writeByte(reg); // Select the register  
         _onewire->writeByte(data); // Write out the data byte 
     }
+}
+
+debug_return DS2781::readVoltage_debugger(){
+    int16_t result = 0;
+    debug_return return_vals; // Structure to be returned 
+    if(_onewire->reset()) // Issue reset command 
+    {       
+        matchROM();
+        _onewire->writeByte(READ_DATA); // Put in read mode 
+        _onewire->writeByte(VOLT_MSB);  // Voltage register MSB 
+        result  = _onewire->readByte()  << 8;     // Read MSB
+        result = result | _onewire->readByte();  // Read LSB
+        // Set the return values in the structure 
+        return_vals.data = (result >> 5)*0.00967; // Get rid of the last 5 reserved bits and account for 9.67 mV resolution 
+        return_vals.success = 1; // Set success boolean to TRUE since data was successfully read
+    }else{
+        return_vals.data = 0; // Wipe the data value 
+        return_vals.success = 0; // Set success boolean to FALSE since data was NOT successfully read
+    }
+    return return_vals;
+}
+
+debug_return DS2781::readTemp_debugger(){
+    int16_t result = 0; 
+    debug_return return_vals; // Structure to be returned 
+    if(_onewire->reset()) // Issue reset command 
+    {       
+        matchROM();
+        _onewire->writeByte(READ_DATA); // Set to read mode 
+        _onewire->writeByte(TEMP_MSB);  // Temperature register MSB
+        result  = (int16_t)_onewire->readByte()  << 8;     // Read MSB   
+        result = result | (int16_t)_onewire->readByte() ;  // Read LSB
+        // Set the return values in the structure 
+        return_vals.data = (result >> 5)*0.125; // Get rid of the last 5 reserved bits and account for 0.125 C resolution  
+        return_vals.success = 1; // Set success boolean to TRUE since data was successfully read
+    }else{
+        return_vals.data = 0; // Wipe the data value 
+        return_vals.success = 0; // Set success boolean to FALSE since data was NOT successfully read
+    }
+    return return_vals;
+}
+
+debug_return DS2781::readCurrent_debugger(){
+    uint16_t result = 0; 
+    debug_return return_vals; 
+    if(_onewire->reset()){
+        matchROM(); // Select specific device 
+        _onewire->writeByte(READ_DATA); // Set to read mode 
+        _onewire->writeByte(CURRENT_MSB); // Current register MSB
+        result  = (uint16_t)_onewire->readByte()  << 8;     // Read MSB   
+        result = result | (uint16_t)_onewire->readByte() ;  // Read LSB
+        if (result & 0x8000) { // Since the reading is in 2's compliment form, if the first bit is 1, the number is negative 
+                    result = 0-((result ^ 0xffff) + 1); // Convert from 2's compliment to signed integer
+        }
+        result = result + 0.0; // Convert to floating point and assign to the return variable
+        // Set the return values in the structure 
+        return_vals.data = result*0.00000332446809; // Return result and account for the resolution (1.5625 uV)/(sense resistance)
+        return_vals.success = 1; // Set success boolean to TRUE since data was successfully read
+    }else{
+        return_vals.data = 0; // Wipe the data value 
+        return_vals.success = 0; // Set success boolean to FALSE since data was NOT successfully read
+    }
+    return return_vals;
 }
