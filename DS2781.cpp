@@ -36,6 +36,10 @@
 #define RARC 0x06 
 #define RSRC 0x07
 
+AnalogIn bus_monitor3V3(p20); // Monitors the 3.3V bus on the power board to determine if the board is being powered by the 1-Wire pin 
+// If the bus is being powered by the 1-Wire line, it drops from ~3.3V to ~1.3V
+// This can be used to indicate that the battery has died 
+
 
 DS2781::DS2781(OneWire *onewire, char ROM[8]){
     for(int i = 0; i < 8; i++){ // Copy ROM ID
@@ -128,7 +132,7 @@ void DS2781::setData(char data, char reg){
 debug_return DS2781::readVoltage_debugger(){
     int16_t result = 0;
     debug_return return_vals; // Structure to be returned 
-    if(bus_monitor3V3 > 0.61f) // Check if the battery has died
+    if(bus_monitor3V3.read_voltage() > 2) // Check if the battery has died
     {       
         _onewire->reset();
         matchROM();
@@ -149,7 +153,7 @@ debug_return DS2781::readVoltage_debugger(){
 debug_return DS2781::readTemp_debugger(){
     int16_t result = 0; 
     debug_return return_vals; // Structure to be returned 
-    if(bus_monitor3V3 > 0.61f) // Check if the battery has died
+    if(bus_monitor3V3.read_voltage() > 2) // Check if the battery has died
     {       
         _onewire->reset();
         matchROM();
@@ -170,7 +174,7 @@ debug_return DS2781::readTemp_debugger(){
 debug_return DS2781::readCurrent_debugger(){
     uint16_t result = 0; 
     debug_return return_vals; 
-    if(bus_monitor3V3 > 0.61f){ // Check if the battery has died
+    if(bus_monitor3V3.read_voltage() > 2){ // Check if the battery has died
         _onewire->reset();
         matchROM(); // Select specific device 
         _onewire->writeByte(READ_DATA); // Set to read mode 
