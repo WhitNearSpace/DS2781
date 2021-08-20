@@ -132,7 +132,7 @@ void DS2781::setData(char data, char reg){
 debug_return DS2781::readVoltage_debugger(){
     int16_t result = 0;
     debug_return return_vals; // Structure to be returned 
-    if(bus_monitor3V3.read_voltage() > 2) // Check if the battery has died
+    if(bus_monitor3V3.read() > 0.6) // Check if the battery has died
     {       
         _onewire->reset();
         matchROM();
@@ -153,7 +153,7 @@ debug_return DS2781::readVoltage_debugger(){
 debug_return DS2781::readTemp_debugger(){
     int16_t result = 0; 
     debug_return return_vals; // Structure to be returned 
-    if(bus_monitor3V3.read_voltage() > 2) // Check if the battery has died
+    if(bus_monitor3V3.read() > 0.6) // Check if the battery has died
     {       
         _onewire->reset();
         matchROM();
@@ -174,7 +174,7 @@ debug_return DS2781::readTemp_debugger(){
 debug_return DS2781::readCurrent_debugger(){
     uint16_t result = 0; 
     debug_return return_vals; 
-    if(bus_monitor3V3.read_voltage() > 2){ // Check if the battery has died
+    if(bus_monitor3V3.read() > 0.6){ // Check if the battery has died
         _onewire->reset();
         matchROM(); // Select specific device 
         _onewire->writeByte(READ_DATA); // Set to read mode 
