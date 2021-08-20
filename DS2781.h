@@ -77,21 +77,21 @@ class DS2781{
 
         /***
          *  Read voltage from DS2781 
-         * @return debug_return structure, containing the voltage
+         * @return debug_return structure containing the voltage
          * data and a debug boolean 
          * **/
         debug_return readVoltage_debugger();
 
         /***
          *  Read temperature from DS2781 
-         * @return debug_return structure, containing the temperature
+         * @return debug_return structure containing the temperature
          * data and a debug boolean 
          * **/
         debug_return readTemp_debugger();
 
         /***
          *  Read current from DS2781 
-         * @return debug_return structure, containing the current
+         * @return debug_return structure containing the current
          * data and a debug boolean 
          * **/
         debug_return readCurrent_debugger();

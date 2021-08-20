@@ -137,10 +137,10 @@ debug_return DS2781::readVoltage_debugger(){
         result = result | _onewire->readByte();  // Read LSB
         // Set the return values in the structure 
         return_vals.data = (result >> 5)*0.00967; // Get rid of the last 5 reserved bits and account for 9.67 mV resolution 
-        return_vals.success = 1; // Set success boolean to TRUE since data was successfully read
+        return_vals.success = true; // Set success boolean to TRUE since data was successfully read
     }else{
-        return_vals.data = 0; // Wipe the data value 
-        return_vals.success = 0; // Set success boolean to FALSE since data was NOT successfully read
+        return_vals.data = 9999; // Wipe the data value 
+        return_vals.success = false; // Set success boolean to FALSE since data was NOT successfully read
     }
     return return_vals;
 }
@@ -157,10 +157,10 @@ debug_return DS2781::readTemp_debugger(){
         result = result | (int16_t)_onewire->readByte() ;  // Read LSB
         // Set the return values in the structure 
         return_vals.data = (result >> 5)*0.125; // Get rid of the last 5 reserved bits and account for 0.125 C resolution  
-        return_vals.success = 1; // Set success boolean to TRUE since data was successfully read
+        return_vals.success = true; // Set success boolean to TRUE since data was successfully read
     }else{
         return_vals.data = 0; // Wipe the data value 
-        return_vals.success = 0; // Set success boolean to FALSE since data was NOT successfully read
+        return_vals.success = false; // Set success boolean to FALSE since data was NOT successfully read
     }
     return return_vals;
 }
@@ -180,10 +180,10 @@ debug_return DS2781::readCurrent_debugger(){
         result = result + 0.0; // Convert to floating point and assign to the return variable
         // Set the return values in the structure 
         return_vals.data = result*0.00000332446809; // Return result and account for the resolution (1.5625 uV)/(sense resistance)
-        return_vals.success = 1; // Set success boolean to TRUE since data was successfully read
+        return_vals.success = true; // Set success boolean to TRUE since data was successfully read
     }else{
         return_vals.data = 0; // Wipe the data value 
-        return_vals.success = 0; // Set success boolean to FALSE since data was NOT successfully read
+        return_vals.success = false; // Set success boolean to FALSE since data was NOT successfully read
     }
     return return_vals;
 }
