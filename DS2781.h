@@ -7,6 +7,14 @@
 
 #define DS2781_FAMILY_CODE 0x3D
 
+/***
+ *  The structure to be returned from debug functions 
+ * **/
+struct debug_return{
+    float data;
+    bool success;
+};
+
 class DS2781{
     public:
         /**
@@ -66,14 +74,6 @@ class DS2781{
         // Read data from the DS2781 and return both the read data
         // and a boolean indicating success/failure of communication
         //////////
-
-        /***
-         *  The structure to be returned from debug functions 
-         * **/
-        struct debug_return{
-            float data;
-            bool success;
-        };
 
         /***
          *  Read voltage from DS2781 
