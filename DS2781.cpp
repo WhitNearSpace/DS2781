@@ -37,7 +37,6 @@
 #define RSRC 0x07
 
 
-
 DS2781::DS2781(OneWire *onewire, char ROM[8]){
     for(int i = 0; i < 8; i++){ // Copy ROM ID
         _ROM[i] = ROM[i];
@@ -131,7 +130,7 @@ debug_return DS2781::readVoltage_debugger(){
     debug_return return_vals; // Structure to be returned 
     if(bus_monitor3V3 > 0.61f) // Check if the battery has died
     {       
-        _onewire->reset()
+        _onewire->reset();
         matchROM();
         _onewire->writeByte(READ_DATA); // Put in read mode 
         _onewire->writeByte(VOLT_MSB);  // Voltage register MSB 
@@ -152,7 +151,7 @@ debug_return DS2781::readTemp_debugger(){
     debug_return return_vals; // Structure to be returned 
     if(bus_monitor3V3 > 0.61f) // Check if the battery has died
     {       
-        _onewire->reset()
+        _onewire->reset();
         matchROM();
         _onewire->writeByte(READ_DATA); // Set to read mode 
         _onewire->writeByte(TEMP_MSB);  // Temperature register MSB
