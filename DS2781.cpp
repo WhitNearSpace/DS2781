@@ -37,6 +37,7 @@
 #define RSRC 0x07
 
 
+
 DS2781::DS2781(OneWire *onewire, char ROM[8]){
     for(int i = 0; i < 8; i++){ // Copy ROM ID
         _ROM[i] = ROM[i];
@@ -128,8 +129,9 @@ void DS2781::setData(char data, char reg){
 debug_return DS2781::readVoltage_debugger(){
     int16_t result = 0;
     debug_return return_vals; // Structure to be returned 
-    if(_onewire->reset()) // Issue reset command 
+    if(bus_monitor3V3 > 0.61f) // Check if the battery has died
     {       
+        _onewire->reset()
         matchROM();
         _onewire->writeByte(READ_DATA); // Put in read mode 
         _onewire->writeByte(VOLT_MSB);  // Voltage register MSB 
@@ -148,8 +150,9 @@ debug_return DS2781::readVoltage_debugger(){
 debug_return DS2781::readTemp_debugger(){
     int16_t result = 0; 
     debug_return return_vals; // Structure to be returned 
-    if(_onewire->reset()) // Issue reset command 
+    if(bus_monitor3V3 > 0.61f) // Check if the battery has died
     {       
+        _onewire->reset()
         matchROM();
         _onewire->writeByte(READ_DATA); // Set to read mode 
         _onewire->writeByte(TEMP_MSB);  // Temperature register MSB
@@ -168,7 +171,8 @@ debug_return DS2781::readTemp_debugger(){
 debug_return DS2781::readCurrent_debugger(){
     uint16_t result = 0; 
     debug_return return_vals; 
-    if(_onewire->reset()){
+    if(bus_monitor3V3 > 0.61f){ // Check if the battery has died
+        _onewire->reset();
         matchROM(); // Select specific device 
         _onewire->writeByte(READ_DATA); // Set to read mode 
         _onewire->writeByte(CURRENT_MSB); // Current register MSB

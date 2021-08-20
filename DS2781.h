@@ -100,6 +100,10 @@ class DS2781{
         char _ROM[8];
         char _family_code = DS2781_FAMILY_CODE; 
         OneWire* _onewire; 
+    protected: 
+        AnalogIn bus_monitor3V3(p20); // Monitors the 3.3V bus on the power board to determine if the board is being powered by the 1-Wire pin 
+        // If the bus is being powered by the 1-Wire line, it drops from ~3.3V to ~1.3V
+        // This can be used to indicate that the battery has died 
 };
 
 #endif
